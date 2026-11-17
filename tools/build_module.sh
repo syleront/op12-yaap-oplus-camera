@@ -4,6 +4,10 @@ set -e
 cd "$(dirname "$0")/.."
 R=$PWD; O=build/module
 VER=$(grep ^version= module/module.prop | cut -d= -f2)
+# semver vMAJOR.MINOR.PATCH; versionCode = MAJOR*10000 + MINOR*100 + PATCH (KernelSU compares the code)
+echo "$VER" | grep -Eq '^v[0-9]+\.[0-9]{1,2}\.[0-9]{1,2}$' || { echo "version must be vMAJOR.MINOR.PATCH (minor/patch < 100): $VER"; exit 1; }
+CODE=$(echo "${VER#v}" | awk -F. '{print $1*10000 + $2*100 + $3}')
+[ "$(grep ^versionCode= module/module.prop | cut -d= -f2)" = "$CODE" ] || { echo "versionCode must be $CODE for $VER"; exit 1; }
 rm -rf $O; mkdir -p $O/files/sys $O/files/hal $O/bin
 cp -r module/. $O/
 cp -r payload/cameraserver/system payload/cameraserver/system_ext $O/files/sys/

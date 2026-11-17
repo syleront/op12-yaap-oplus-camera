@@ -1,5 +1,5 @@
 📸 **OnePlus Camera for YAAP — OnePlus 12 (waffle)**
-KernelSU module · v1.5
+KernelSU module · v1.0.0
 
 OnePlus camera + OnePlus Photos on YAAP, based on DerpFest's port. Nothing is written to system partitions: remove the module, reboot, and you're back on stock YAAP.
 
