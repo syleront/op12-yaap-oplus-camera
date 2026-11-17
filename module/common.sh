@@ -139,7 +139,7 @@ hal_switch() {
     return $r
 }
 
-# Lens-row position fix: a resource overlay (no code) for com.oplus.camera, preinstalled in
+# Zoom ring + lens-row fix: a resource overlay (no code) for com.oplus.camera, preinstalled in
 # /product/overlay. Not static, so it can be switched live:  echo off > /data/adb/opcamera/zoomfix
 ZOOMFIX=com.syleront.opcamera.zoomfix
 zoomfix_apply() {

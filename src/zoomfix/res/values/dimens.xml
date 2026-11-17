@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Lens/zoom row position inside the zoom seek bar (stock 85-90dp). The app's layout math
-         assumes a narrower screen; at 1440 px wide the row ends up ~80dp too high. -->
-    <dimen name="zoom_arc_seekbar_focus_circle_center_y">171dp</dimen>
+    <!-- Zoom ring radius. The app draws the ring as a circle wider than the screen, so only a flat
+         arc shows, with its ends at the screen edges at the bottom of the preview; the zoom bar
+         container height includes the arc height r - sqrt(r^2 - (W/2)^2). Stock 199dp = 697 px is
+         less than half of this 1440 px screen -> sqrt(negative) = NaN -> the ring shows as a full
+         circle and the lens row ends up ~280 px too high. 228dp (the app's own _v2 value) = 798 px. -->
+    <dimen name="zoom_arc_seekbar_bg_circle_radius">228dp</dimen>
 </resources>
