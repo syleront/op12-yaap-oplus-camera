@@ -1,6 +1,6 @@
 id=opcamera_yaap
 name=OnePlus Camera for YAAP
-version=v1.2
-versionCode=3
+version=v1.3
+versionCode=4
 author=Syleront
 description=OnePlus camera (from DerpFest) on YAAP for OnePlus 12. Reboot to activate.

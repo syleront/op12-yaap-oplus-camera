@@ -21,14 +21,23 @@ HAL_TGTS="/odm/lib64 /odm/etc /vendor/lib64"
 log() { echo "$(date '+%m-%d %H:%M:%S') [$1] $2" >> $LOG; }
 trim_log() { [ -f $LOG ] && [ $(wc -l < $LOG) -gt 400 ] && { tail -n 200 $LOG > $LOG.tmp; mv $LOG.tmp $LOG; }; }
 
-set_desc() { sed -i "s|^description=.*|description=$1|" $MODDIR/module.prop; }
+# Replace the description line. No sed: the text is free-form and must not be parsed as a pattern
+# (a "|" in it once wiped module.prop). Text goes through ENVIRON so awk doesn't interpret escapes.
+set_desc() {
+    p=$MODDIR/module.prop
+    grep -q '^id=' $p || return 1
+    DESC="$1" awk '/^description=/ { print "description=" ENVIRON["DESC"]; done = 1; next } { print }
+        END { if (!done) print "description=" ENVIRON["DESC"] }' $p > $p.tmp &&
+        grep -q '^id=' $p.tmp && cat $p.tmp > $p
+    rm -f $p.tmp
+}
 hal_name() { [ "$1" = oos ] && echo "OnePlus HAL" || echo "YAAP HAL"; }
 hal_mode() { m=$(cat $ST/hal_mode 2>/dev/null); [ "$m" = yaap ] && echo yaap || echo oos; }
 desc_active() {
     if [ "$(hal_cur)" = oos ]; then
-        set_desc "Active | camera HAL: OnePlus (OnePlus camera works). Press Action to switch to the YAAP HAL."
+        set_desc "Active. Camera HAL: OnePlus (OnePlus camera works). Press Action to switch to the YAAP HAL."
     else
-        set_desc "Active | camera HAL: YAAP (OnePlus camera won't open). Press Action to switch to the OnePlus HAL."
+        set_desc "Active. Camera HAL: YAAP (OnePlus camera won't open). Press Action to switch to the OnePlus HAL."
     fi
 }
 

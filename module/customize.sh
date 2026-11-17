@@ -21,6 +21,18 @@ getprop ro.build.fingerprint > $ST/fingerprint
 rm -f $ST/boot_pending
 rm -f $MODPATH/sha256.txt
 
+# HAL switch app: quick settings tile + launcher icon. Optional; install problems don't stop the module.
+ui_print "- Installing the Camera HAL switch app (quick settings tile + home-screen icon)"
+T=/data/local/tmp/opcamera_halswitch.apk
+if cp $MODPATH/files/HalSwitch.apk $T && chmod 644 $T && pm install -r $T >/dev/null 2>&1; then
+    # toasts are suppressed while an app's notifications are off
+    pm grant com.syleront.opcamera.halswitch android.permission.POST_NOTIFICATIONS >/dev/null 2>&1
+    ui_print "  Allow it root in KernelSU > Superuser (\"Camera HAL\") so it can switch."
+else
+    ui_print "  ! App install failed (module still works; the Action button switches the HAL)"
+fi
+rm -f $T
+
 ui_print "- Camera HAL at boot: $(hal_name $(hal_mode))"
 ui_print "  (press the module's Action button to switch)"
 ui_print "- Reboot to activate."

@@ -11,6 +11,8 @@ cp -r payload/app/system_ext/. $O/files/sys/system_ext/
 tar -xf payload/hal.tar -C $O/files/hal
 cp build/bin/binderpatch $O/bin/
 cp tools/gen/labels.txt $O/files/labels.txt
+# HAL switch app (quick settings tile + launcher icon), installed by customize.sh
+cp build/halswitch/HalSwitch.apk $O/files/HalSwitch.apk
 # lens-row fix overlay (src/zoomfix, built non-static so it can be toggled live)
 mkdir -p $O/files/sys/product/overlay/OPCameraZoomFix
 cp build/zoomfix/zoomfix_static_false.apk $O/files/sys/product/overlay/OPCameraZoomFix/OPCameraZoomFix.apk
