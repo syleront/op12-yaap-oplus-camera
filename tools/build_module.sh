@@ -17,10 +17,15 @@ cp build/halswitch/HalSwitch.apk $O/files/HalSwitch.apk
 mkdir -p $O/files/sys/product/overlay/OPCameraZoomFix
 cp build/zoomfix/zoomfix_static_false.apk $O/files/sys/product/overlay/OPCameraZoomFix/OPCameraZoomFix.apk
 for p in sys/product sys/product/overlay sys/product/overlay/OPCameraZoomFix sys/product/overlay/OPCameraZoomFix/OPCameraZoomFix.apk; do echo "u:object_r:system_file:s0 $p"; done >> $O/files/labels.txt
+# OnePlus gallery (DerpFest's OppoGallery2, unmodified) as a priv-app: it then runs as priv_app_36 like
+# the camera, which the editor needs (it loads the camera's APS/effect libs from /odm via sphal)
+[ -f $O/files/sys/system_ext/priv-app/OppoGallery2/OppoGallery2.apk ] || { echo "payload: OppoGallery2.apk missing"; exit 1; }
+check_md5() { [ "$(md5sum "$1" | cut -d' ' -f1)" = "$2" ] || { echo "md5 mismatch: $1"; exit 1; }; }
+check_md5 $O/files/sys/system_ext/priv-app/OppoGallery2/OppoGallery2.apk 69672fa08b07eb9c4dc57c87ced973fd
+for p in sys/system_ext/priv-app/OppoGallery2 sys/system_ext/priv-app/OppoGallery2/OppoGallery2.apk; do echo "u:object_r:system_file:s0 $p"; done >> $O/files/labels.txt
 
 # checks: patched blobs are the tested ones, every payload file has a tested label,
 # no shipped APK uses a shared system uid (that bootlooped before)
-check_md5() { [ "$(md5sum "$1" | cut -d' ' -f1)" = "$2" ] || { echo "md5 mismatch: $1"; exit 1; }; }
 check_md5 $O/files/hal/odm/lib64/libAlgoProcess.so 68fc7841b75b62d0369c7db90a9832e8
 check_md5 $O/files/hal/odm/lib64/libapsfix.so 91b2bdfe5e71c2a77ecf89306f138b73
 missing=$(cd $O/files && find sys hal -mindepth 1 | while read p; do grep -q " $p\$" labels.txt || echo "$p"; done)

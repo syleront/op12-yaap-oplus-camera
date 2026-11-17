@@ -33,6 +33,14 @@ else
 fi
 rm -f $T
 
+# The OnePlus gallery ships as a system app; a copy installed as a normal app would shadow it
+# (it'd run without the camera's SELinux rules and its editor crashes).
+if pm path com.oneplus.gallery 2>/dev/null | grep -q '^package:/data/app/' &&
+   ! pm path com.oneplus.gallery 2>/dev/null | grep -q '/priv-app/'; then
+    ui_print "- Removing the separately installed OnePlus gallery (the module provides it)"
+    pm uninstall com.oneplus.gallery >/dev/null 2>&1
+fi
+
 ui_print "- Camera HAL at boot: $(hal_name $(hal_mode))"
 ui_print "  (press the module's Action button to switch)"
 ui_print "- Reboot to activate."

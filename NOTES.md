@@ -59,3 +59,17 @@ the pattern is not found.
   /data/adb/opcamera/zoomfix = off. Cause: am.w.z4 sagitta term r - sqrt(r^2 - (W/2)^2) with r = 199dp = 697px
   < 720 = W/2 -> NaN -> row ~280 px too high at 1440 px width.
 - Labels come from the live-tested staging (tools/gen/labels.txt); build refuses unlabeled files and APKs with sharedUserId.
+
+## OnePlus gallery (v1.4)
+- DerpFest's `system_ext/priv-app/OppoGallery2/OppoGallery2.apk` (com.oneplus.gallery 16.35.10, EU/GDPR
+  build, no sharedUserId), unmodified, in `payload/app/system_ext/priv-app/`. md5 checked by the build.
+- Must be a priv-app: the photo editor calls the camera SDK (libMsEffectSdk, libAPSClient-*-jni), which loads
+  /odm libs through the sphal namespace (libmsnativefilter, libalog, libAlgoProcess...). YAAP labels those
+  vendor_file; DerpFest's vendor_file_contexts labels them same_process_hal_file. As a normal app
+  (untrusted_app_34) the loads fail and the editor segfaults on a null function pointer. As a priv-app it
+  runs as priv_app_36, which already has `allow priv_app_36 vendor_file file {read open getattr map execute}`.
+- privapp allowlist: added com.oplus.camera.sandbox.permission.SANDBOX_PROVIDER (signature|privileged,
+  defined by the camera); every other privileged permission it requests was already listed.
+- Not working (same on DerpFest): downloadable editor plugins/models. Their server URLs come from the OPlus
+  AppFeatureProvider (content://com.oplus.customize.coreapp.configmanager.configprovider.AppFeatureProvider,
+  keys like com.oplus.gallery3d.videoeditor_url), which neither ROM has, so the URL is empty.
