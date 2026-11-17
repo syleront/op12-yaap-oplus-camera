@@ -55,6 +55,7 @@ the pattern is not found.
 - HAL mode (oos|yaap) in /data/adb/opcamera/hal_mode; Action button = live switch (refuses while a camera is open).
 - Lens-row fix: src/zoomfix RRO (dimen zoom_arc_seekbar_focus_circle_center_y 90dp -> 171dp), preinstalled
   in /product/overlay (user-installed RROs need the target's cert). Non-static, enabled by service.sh unless
+  The overlay value must be in values-sw380dp (target defines sw363dp-2772x1272; an RRO entry only wins if its config is >= as specific), link with --no-resource-deduping.
   /data/adb/opcamera/zoomfix = off. Cause: am.w.z4 sagitta term r - sqrt(r^2 - (W/2)^2) with r = 199dp = 697px
   < 720 = W/2 -> NaN -> row ~280 px too high at 1440 px width.
 - Labels come from the live-tested staging (tools/gen/labels.txt); build refuses unlabeled files and APKs with sharedUserId.

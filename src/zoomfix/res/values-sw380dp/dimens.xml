@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- An RRO value only wins if its config is at least as specific as the target's best match.
+         The camera app defines this dimen for sw363dp-2772x1272, so a plain values/ entry is
+         ignored. sw380dp beats sw363dp (smallest width is compared before screen size) and still
+         matches this phone at density 560 (sw411dp) and 576 (sw400dp). -->
+    <dimen name="zoom_arc_seekbar_focus_circle_center_y">171dp</dimen>
+</resources>
