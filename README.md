@@ -48,6 +48,9 @@ Remove the module in KernelSU and reboot. The camera, gallery and Camera HAL app
 - **Slow motion:** the viewfinder lags.
 - **Gallery:** downloadable editor plugins / AI models don't download (they need OnePlus system services
   that neither YAAP nor DerpFest have). Built-in editing works.
+- **Photo lost right after switching lenses:** if you shoot within ~1–2 s of switching lenses (e.g. 0.6× → 1×),
+  the OnePlus HAL can fail the capture: the photo isn't saved and its thumbnail stays on "processing". Wait a
+  moment after switching before shooting. DerpFest has the same issue (it's in the OnePlus HAL/camera).
 - **YAAP HAL mode:** the OnePlus camera doesn't open. Switch to the OnePlus HAL first.
 - The camera HAL can occasionally crash; it restarts on its own (reopen the camera).
 - **After a YAAP update** the camera may stop working: the module keeps using DerpFest's camera service

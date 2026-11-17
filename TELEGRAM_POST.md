@@ -24,6 +24,7 @@ OnePlus camera + OnePlus Photos on YAAP, based on DerpFest's port. Nothing is wr
 **Known issues**
 • 60 fps: greyish viewfinder (the video itself is fine)
 • Slow-mo viewfinder lags
+• Shooting right after switching lenses can lose the photo (stuck on "processing"); wait ~1–2 s after switching. Same on DerpFest
 • Gallery plugin / AI model downloads don't work
 • After a YAAP update the camera may break: disable the module and report
 
