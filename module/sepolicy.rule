@@ -1,0 +1,48 @@
+# OnePlus camera on YAAP - Stage A (DerpFest cameraserver + OPlus camera extension)
+allow cameraserver vendor_default_prop file { read open getattr map }
+allow cameraserver vendor_file file { read open getattr map execute }
+# OPlus camera app (runs as priv_app on YAAP; DerpFest gives it its own domain)
+allow hal_camera_default priv_app_36 binder { call transfer }
+allow priv_app_36 activity_service service_manager { find }
+allow priv_app_36 adsprpcd_file dir { ioctl read getattr lock open watch watch_reads search }
+allow priv_app_36 adsprpcd_file dir { search }
+allow priv_app_36 appdomain memfd_file { read write getattr map execute }
+allow priv_app_36 appdomain_tmpfs file { read write getattr map execute }
+allow priv_app_36 camera_config_prop file { read getattr map open }
+allow priv_app_36 display_service service_manager { find }
+allow priv_app_36 hal_camera_default binder { call transfer }
+allow priv_app_36 hal_system_suspend_service service_manager { find }
+allow priv_app_36 package_native_service service_manager { find }
+allow priv_app_36 permission_service service_manager { find }
+allow priv_app_36 proc_ufs_file file { read write create getattr open }
+allow priv_app_36 public_adsprpcd_file file { ioctl read getattr lock map open watch watch_reads }
+allow priv_app_36 selinuxfs file { read open }
+allow priv_app_36 servicemanager binder { call transfer }
+allow priv_app_36 surfaceflinger binder { call transfer }
+allow priv_app_36 surfaceflinger fd { use }
+allow priv_app_36 surfaceflinger_service service_manager { find }
+allow priv_app_36 system_server binder { call transfer }
+allow priv_app_36 system_server fd { use }
+allow priv_app_36 vendor_camera_prop file { read getattr map open }
+allow priv_app_36 vendor_camera_update_data_file dir { read write create getattr setattr rename open add_name remove_name reparent search rmdir }
+allow priv_app_36 vendor_camera_update_data_file file { read write create getattr setattr unlink rename open }
+allow priv_app_36 vendor_data_file dir { read write create getattr setattr rename open add_name remove_name reparent search rmdir }
+allow priv_app_36 vendor_data_file file { read write create getattr setattr unlink rename open }
+allow priv_app_36 vendor_default_prop file { read getattr map open }
+allow priv_app_36 vendor_hal_offlinecamera_service service_manager { find }
+allow priv_app_36 vendor_hal_qspmhal_default binder { call transfer }
+allow priv_app_36 vendor_qdsp_device chr_file { ioctl read }
+allow priv_app_36 vendor_qdsp_device dir { read write create getattr open add_name remove_name search }
+allow priv_app_36 vendor_qdsp_device file { read write create getattr unlink open }
+allow priv_app_36 vendor_xdsp_device chr_file { ioctl read write create getattr unlink open }
+allow priv_app_36 vendor_xdsp_device dir { read write create getattr open add_name remove_name search }
+allow priv_app_36 vendor_xdsp_device file { read write create getattr unlink open }
+allow servicemanager priv_app_36 binder { call transfer }
+allow surfaceflinger priv_app_36 binder { transfer }
+allow system_server priv_app_36 binder { transfer }
+allow priv_app_36 vendor_qdsp_device chr_file { open getattr map }
+allow priv_app_36 vendor_xdsp_device chr_file { map }
+allow priv_app_36 vendor_hal_qspmhal_service service_manager { find }
+allow priv_app_36 vendor_file file { read open getattr map execute }
+allow priv_app_36 vendor_file dir { search getattr }
+allow priv_app_36 adsprpcd_file file { read open getattr map }

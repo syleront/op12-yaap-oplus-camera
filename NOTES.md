@@ -42,3 +42,19 @@ the pattern is not found.
 ## Known issues
 - Slow-mo: HAL runs HFR at ~60 fps instead of 240 -> viewfinder 7.5 fps (1 of 8 batch frames).
 - OOS HAL globally drops YAAP's third-party camera improvements -> trying per-app HAL switching.
+
+## KernelSU module (module/, tools/build_module.sh -> build/opcamera_yaap-<ver>.zip)
+- No system/ dir: KSU 3.x has no metamodule here, and we want our own boot guard. post-fs-data.sh mounts
+  everything in init's ns (overlays from /data/adb/modules/opcamera_yaap/files/{sys,hal}, cameraserver
+  bind+suid, libbinder bind from /data/adb/opcamera/libbinder.so).
+- libbinder is patched on-device at boot by bin/binderpatch (src/binderpatch) from the ROM's own lib,
+  cached by source md5 -> re-done automatically after YAAP updates; skipped if pattern not found.
+- Boot guard: /data/adb/opcamera/boot_pending set at post-fs-data, cleared by service.sh after
+  boot_completed + system_server stable 20 s. Still present next boot -> module disables itself.
+  No boot_completed within 300 s -> service.sh disables module and reboots.
+- HAL mode (oos|yaap) in /data/adb/opcamera/hal_mode; Action button = live switch (refuses while a camera is open).
+- Lens-row fix: src/zoomfix RRO (dimen zoom_arc_seekbar_focus_circle_center_y 90dp -> 171dp), preinstalled
+  in /product/overlay (user-installed RROs need the target's cert). Non-static, enabled by service.sh unless
+  /data/adb/opcamera/zoomfix = off. Cause: am.w.z4 sagitta term r - sqrt(r^2 - (W/2)^2) with r = 199dp = 697px
+  < 720 = W/2 -> NaN -> row ~280 px too high at 1440 px width.
+- Labels come from the live-tested staging (tools/gen/labels.txt); build refuses unlabeled files and APKs with sharedUserId.

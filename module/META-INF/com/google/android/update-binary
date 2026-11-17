@@ -1,0 +1,5 @@
+#!/sbin/sh
+# KernelSU installs this module through ksud; flashing from recovery is not supported.
+OUTFD=$2
+echo "ui_print This module must be installed from the KernelSU manager." > /proc/self/fd/$OUTFD
+exit 1

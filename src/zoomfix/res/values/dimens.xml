@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Lens/zoom row position inside the zoom seek bar (stock 85-90dp). The app's layout math
+         assumes a narrower screen; at 1440 px wide the row ends up ~80dp too high. -->
+    <dimen name="zoom_arc_seekbar_focus_circle_center_y">171dp</dimen>
+</resources>
