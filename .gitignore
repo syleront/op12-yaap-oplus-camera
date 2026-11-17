@@ -1,0 +1,10 @@
+# build outputs
+/build/
+# proprietary OnePlus/DerpFest blobs - extracted locally, never committed
+/payload/**/*.so
+/payload/**/*.apk
+/payload/**/*.jar
+/payload/**/*.tar
+/payload/cameraserver/
+/payload/app/
+/payload/odm/
