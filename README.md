@@ -92,7 +92,7 @@ included: you extract them from the DerpFest ROM yourself. See [docs/BUILDING.md
 | `src/` | our native code (`apsfix`, `binderpatch`, `evictfix`, `shim`) and APKs (`halswitch`, `zoomfix`) |
 | `tools/` | build scripts, payload extraction, binary patchers |
 | `payload/` | extracted DerpFest files (not in git); `MANIFEST.sha256` pins the tested versions |
-| `docs/` | build and payload docs, technical notes, the release post |
+| `docs/` | build and payload docs, technical notes |
 | `dev/` | live-test scripts and probes used during development (not part of the build) |
 
 ## Credits

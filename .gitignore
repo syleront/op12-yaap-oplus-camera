@@ -8,3 +8,5 @@
 *.keystore
 *.jks
 *.pk8
+# local drafts, not published
+/docs/TELEGRAM_POST.md
