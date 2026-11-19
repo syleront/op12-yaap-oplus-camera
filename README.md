@@ -90,7 +90,7 @@ included: you extract them from the DerpFest ROM yourself. See [docs/BUILDING.md
 |---|---|
 | `module/` | the KernelSU module scripts (install, mounts, boot guard, HAL switch) |
 | `files/` | small config files the module adds (permissions, sysconfig) |
-| `src/` | our native code (`apsfix`, `binderpatch`, `evictfix`, `shim`) and APKs (`halswitch`, `zoomfix`) |
+| `src/` | our native code (`apsfix`, `binderpatch`, `evictfix`, `heiffix`, `shim`) and APKs (`halswitch`, `zoomfix`) |
 | `tools/` | build scripts, payload extraction, binary patchers |
 | `payload/` | extracted DerpFest files (not in git); `MANIFEST.sha256` pins the tested versions |
 | `docs/` | build and payload docs, technical notes |

@@ -136,6 +136,7 @@ u:object_r:system_lib_file:s0 sys/system_ext/lib64/libbsproxy.so
 u:object_r:system_lib_file:s0 sys/system_ext/lib64/libcsext_shim.so
 u:object_r:system_lib_file:s0 sys/system_ext/lib64/libcsextimpl.so
 u:object_r:system_lib_file:s0 sys/system_ext/lib64/libextendfile.so
+u:object_r:system_lib_file:s0 sys/system_ext/lib64/libheiffix.so
 u:object_r:system_lib_file:s0 sys/system_ext/lib64/libhoaeffects.qti.so
 u:object_r:system_lib_file:s0 sys/system_ext/lib64/libhoaeffects_csim.so
 u:object_r:system_lib_file:s0 sys/system_ext/lib64/libjni_burstpmk.so

@@ -39,13 +39,15 @@ Every patcher checks the input and output hashes, so it only ever produces the t
 |---|---|---|
 | `cameraserver` | `tools/patch_cameraserver.py` + `src/evictfix/cave.s` | the OnePlus camera must evict other camera apps instead of sharing the HAL (sharing crashes the OnePlus HAL) |
 | `libcsextimpl.so` | `patchelf --add-needed libcsext_shim.so` (patchelf 0.18) | it needs three `CameraSessionStats` constants that YAAP's `libcamera_client.so` lacks |
-| `libAlgoProcess.so` | `tools/patch_algoprocess.py` | YAAP's `AHardwareBuffer_lockPlanes` returns one plane for QTI P010; the import is redirected to `libapsfix.so` |
+| `libAPSClient-cmd-jni.so` | `patchelf --add-needed libheiffix.so` (patchelf 0.18) | HEIC: it looks the encoder parameters up by older names than the OnePlus HAL sends (see `src/heiffix`) |
+| `libAlgoProcess.so` | `tools/patch_algoprocess.py` | YAAP's `AHardwareBuffer_lockPlanes` returns one plane for QTI P010; the import is redirected to `libapsfix.so`. HEIC: the EXIF block is passed on with its real size instead of being cut off at its first zero byte |
 
 ## 4. Built from source (`tools/build_native.sh`, `tools/build_apps.sh`)
 | output | source |
 |---|---|
 | `libcsext_shim.so` | `src/shim` |
 | `libapsfix.so` | `src/apsfix` |
+| `libheiffix.so` | `src/heiffix`: maps the camera JNI library's old HEIC parameter names to the HAL's (`..._INT_` -> `..._INT_BASIC_`) |
 | `bin/binderpatch` | `src/binderpatch`: patches the phone's own `libbinder.so` at boot (4 MB binder buffer instead of 1 MB) |
 | `HalSwitch.apk` | `src/halswitch`: "Camera HAL" quick settings tile and launcher icon |
 | `OPCameraZoomFix.apk` | `src/zoomfix`: resource overlay for the zoom ring / lens row |

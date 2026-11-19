@@ -28,7 +28,7 @@ tools/build.sh
 ```
 
 `tools/build.sh` runs:
-1. `build_native.sh`: `binderpatch`, `libapsfix.so`, `libcsext_shim.so`, and the camera-eviction stub.
+1. `build_native.sh`: `binderpatch`, `libapsfix.so`, `libcsext_shim.so`, `libheiffix.so`, and the camera-eviction stub.
 2. `build_apps.sh`: `HalSwitch.apk` and `OPCameraZoomFix.apk`, signed with `KEYSTORE`/`KS_PASS`/`KS_ALIAS`
    (default: `~/.android/debug.keystore`).
 3. `build_module.sh`: checks the payload against `payload/MANIFEST.sha256`, applies the binary patches,

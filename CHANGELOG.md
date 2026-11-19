@@ -3,6 +3,11 @@
 Versions are `vMAJOR.MINOR.PATCH`: PATCH = fixes, MINOR = new features, MAJOR = breaking changes
 (e.g. dropping support for an older YAAP). `versionCode` = MAJOR×10000 + MINOR×100 + PATCH.
 
+## v1.0.2
+- Fixed: HEIC photos ("High efficiency image" and "10-bit color" in the camera's settings) were saved
+  without the picture. They now save correctly, including EXIF (date taken, exposure, ...). DerpFest
+  has the same bug.
+
 ## v1.0.1
 - Fixed: opening the OnePlus camera while another camera app still had a camera open (any lens,
   including the front camera) crashed the camera HAL. The other app now loses the camera cleanly,

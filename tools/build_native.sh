@@ -3,6 +3,7 @@
 #   binderpatch        on-device libbinder patcher (src/binderpatch)
 #   libapsfix.so       AHardwareBuffer_lockPlanes fix loaded by OnePlus APS (src/apsfix)
 #   libcsext_shim.so   CameraSessionStats constants for libcsextimpl.so (src/shim)
+#   libheiffix.so      HEIC parameter-name fix for libAPSClient-cmd-jni.so (src/heiffix)
 #   cave.bin           camera-eviction stub for tools/patch_cameraserver.py (src/evictfix)
 set -e
 . "$(dirname "$0")/env.sh"
@@ -17,6 +18,8 @@ cd "$R"
     -Wl,--no-as-needed -lextendfile -lnativewindow -llog -Wl,--as-needed
 "$CLANGXX" --target=aarch64-linux-android34 -shared -fPIC -O2 -nostdlib++ -Wl,-soname,libcsext_shim.so \
     -Wl,--build-id=sha1 -o "$O/libcsext_shim.so" src/shim/csext_shim.cpp
+"$CLANG" --target=aarch64-linux-android34 -O2 -shared -fPIC -fvisibility=hidden -Wall -Wextra -Wl,-soname,libheiffix.so \
+    -Wl,-z,max-page-size=16384 -Wl,--build-id=sha1 -s -o "$O/libheiffix.so" src/heiffix/heiffix.c -llog
 # addresses are those of the tested DerpFest cameraserver (see tools/patch_cameraserver.py)
 "$CLANG" --target=aarch64-linux-android30 -c src/evictfix/cave.s -o "$O/cave.o"
 "$NDKBIN/ld.lld$X" -o "$O/cave.elf" "$O/cave.o" -Ttext=0x37eee0 --defsym=isPriv=0xf5ca4 \

@@ -23,7 +23,8 @@ $missing"
 extra=$(cd payload && find sys hal -type f | while read -r p; do grep -q "  $p\$" MANIFEST.sha256 || echo "$p"; done)
 [ -z "$extra" ] || die "files in payload/ that are not in MANIFEST.sha256:
 $extra"
-for f in build/native/binderpatch build/native/libapsfix.so build/native/libcsext_shim.so build/native/cave.bin \
+for f in build/native/binderpatch build/native/libapsfix.so build/native/libcsext_shim.so build/native/libheiffix.so \
+         build/native/cave.bin \
          build/halswitch/HalSwitch.apk build/zoomfix/OPCameraZoomFix.apk; do
     [ -f "$f" ] || die "missing $f (run tools/build.sh)"
 done
@@ -41,12 +42,17 @@ py "$(hp "$R/tools/patch_cameraserver.py")" "$(hp "$R/payload/sys/system/bin/cam
 L=$O/files/sys/system_ext/lib64/libcsextimpl.so
 pelf --add-needed libcsext_shim.so "$(hp "$R/$L")"
 check_md5 $L 6ab7b16614f418fdd71a9ef727877c88
-# libAlgoProcess.so: YAAP's AHardwareBuffer_lockPlanes returns one plane for P010 (src/apsfix)
+# libAPSClient-cmd-jni.so: + NEEDED libheiffix.so (src/heiffix: HEIC parameter names)
+L=$O/files/sys/system_ext/lib64/libAPSClient-cmd-jni.so
+pelf --add-needed libheiffix.so "$(hp "$R/$L")"
+check_md5 $L 4110a2bd9e6714e7d80a0c5affa892e4
+# libAlgoProcess.so: YAAP's AHardwareBuffer_lockPlanes returns one plane for P010 (src/apsfix); HEIC EXIF
 py "$(hp "$R/tools/patch_algoprocess.py")" "$(hp "$R/payload/hal/odm/lib64/libAlgoProcess.so")" \
    "$(hp "$R/$O/files/hal/odm/lib64/libAlgoProcess.so")"
 
 # --- our own builds
 cp build/native/libcsext_shim.so $O/files/sys/system_ext/lib64/
+cp build/native/libheiffix.so $O/files/sys/system_ext/lib64/
 cp build/native/libapsfix.so $O/files/hal/odm/lib64/
 cp build/native/binderpatch $O/bin/
 cp build/halswitch/HalSwitch.apk $O/files/HalSwitch.apk         # installed by customize.sh
@@ -57,9 +63,10 @@ cp tools/labels.txt $O/files/labels.txt
 # --- checks: the patched blobs are the tested ones, every file has a tested SELinux label,
 # no shipped APK uses a shared system uid (that bootlooped before)
 check_md5 $O/files/sys/system/bin/cameraserver ca45c8570630cb84800c7775200620d3
-check_md5 $O/files/hal/odm/lib64/libAlgoProcess.so 68fc7841b75b62d0369c7db90a9832e8
+check_md5 $O/files/hal/odm/lib64/libAlgoProcess.so f217e98b44b2baab38407d5df71c6fac
 check_md5 $O/files/hal/odm/lib64/libapsfix.so 91b2bdfe5e71c2a77ecf89306f138b73
 check_md5 $O/files/sys/system_ext/lib64/libcsext_shim.so ea248c50ef1e262800e43efebf843dbc
+check_md5 $O/files/sys/system_ext/lib64/libheiffix.so 3935e12d99086489cf2a20be3a5ca76c
 missing=$(cd $O/files && find sys hal -mindepth 1 | while read -r p; do grep -q " $p\$" labels.txt || echo "$p"; done)
 [ -z "$missing" ] || die "no tested label for:
 $missing"
