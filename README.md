@@ -10,8 +10,9 @@ everything is mounted at boot from the module, so removing it and rebooting give
 > check again before reporting a bug to YAAP.
 
 ## Requirements
-- OnePlus 12 (waffle) on **YAAP, Android 17**. Tested on build `CP2A.260605.016`. The installer refuses
-  other ROMs/devices.
+- OnePlus 12 (waffle) on **YAAP, Android 17**. Tested on YAAP `17-Calypso-waffle-20261001` and
+  `20261116` (Android build `CP2A.260605.016`). The installer
+  refuses other ROMs/devices.
 - **KernelSU** (the installer refuses Magisk/APatch).
 
 ## What you get
