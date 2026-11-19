@@ -6,11 +6,11 @@ Live-tested state (2026-11-17): OPlus camera (com.oplus.camera) fully working on
 ## Pieces
 | Stage | What | Script |
 |---|---|---|
-| A | DerpFest cameraserver + libcameraservice + OOS libcsextimpl (+ src/shim/csext_shim.cpp) | tools/live_cs.sh |
-| B | OplusCamera.apk + OplusPermissionDefiner (NO OplusAppPlatform: sharedUserId=android.uid.system bootloops) | tools/live_app.sh |
-| C | DerpFest odm/vendor camera HAL files (payload/hal.tar, 44 files + libui-stock.so) | tools/live_hal.sh |
-| - | sepolicy for priv_app_36 (payload/ocam_sepolicy.rule) | applied with ksud sepolicy patch |
-| - | libbinder 4 MB binder VM | tools/zr.sh (+ zr_watch.sh auto-rollback) |
+| A | DerpFest cameraserver + libcameraservice + DerpFest libcsextimpl (+ src/shim/csext_shim.cpp) | dev/live_cs.sh |
+| B | OplusCamera.apk + OplusPermissionDefiner (NO OplusAppPlatform: sharedUserId=android.uid.system bootloops) | dev/live_app.sh |
+| C | DerpFest odm/vendor camera HAL files (payload/hal/, 44 files + libui-stock.so) | dev/live_hal.sh |
+| - | sepolicy for priv_app_36 (dev/ocam_sepolicy.rule; the module uses module/sepolicy.rule) | applied with ksud sepolicy patch |
+| - | libbinder 4 MB binder VM | dev/zr.sh (+ zr_watch.sh auto-rollback) |
 
 ## Binary patches (reproducible)
 ### libAlgoProcess.so (DerpFest odm, md5 b706aa115dff69d3468c1ee61b24cd37)
@@ -32,6 +32,18 @@ captures time out (30 s) / get lost. DerpFest maps 4 MB.
 Module must pattern-patch the device's libbinder (offsets change per YAAP build) and skip if
 the pattern is not found.
 
+### cameraserver (DerpFest system, md5 5547ec78e5db7deed92612e81739508c)
+CameraService is linked statically into /system/bin/cameraserver (the shipped libcameraservice.so is not
+what runs). CAF's isPrivilegedClient() (persist.vendor.camera.privapp.list = com.oplus.camera) cleared
+the eviction lists, so another app kept its camera and the OnePlus HAL crashed when shared; and even
+with eviction, front (cost 33) + OnePlus on camera 2 (cost 66) fit in 100 and crashed the HAL.
+- bl isPrivilegedClient -> mov w0,#0 at 0xf14fc (handleEvictionsLocked) and 0xf44d8 (finishConnectLocked)
+- bl wouldEvictLocked at 0xf14ec -> stub (src/evictfix/cave.s) in the zero padding after .plt (0x37eee0,
+  R+X PT_LOAD extended by 0x40): the privileged client's descriptor cost is set to 100
+- tools/patch_cameraserver.py, result md5 ca45c8570630cb84800c7775200620d3
+- Debugging tips: never pipe `dumpsys media.camera` into `head` (the HAL gets SIGPIPE and dies); uprobes
+  only attach to processes started after they are registered.
+
 ## Gotchas
 - KernelSU live sepolicy patches don't bump selinux status `policyload`, so userspace AVCs
   (servicemanager) keep cached denials. Live fix: dd /sys/fs/selinux/policy -> /sys/fs/selinux/load
@@ -40,10 +52,15 @@ the pattern is not found.
 - Never restart zygote / reboot without the user's OK; always keep an auto-rollback.
 
 ## Known issues
-- Slow-mo: HAL runs HFR at ~60 fps instead of 240 -> viewfinder 7.5 fps (1 of 8 batch frames).
-- OOS HAL globally drops YAAP's third-party camera improvements -> trying per-app HAL switching.
+- Slow-mo: only 60 real frames/s at 120/240/480 fps; the viewfinder shows 1 of 8 (7.5 fps). The same on
+  fully stock YAAP (its own cameraserver + HAL; plain AOSP constrained-high-speed test app, bright light),
+  so it's a YAAP kernel/platform limit, not fixable from the module. Forcing cameraserver batching
+  (the HAL advertises batch_size_max = 1) doesn't help: batch 8 overflows the HAL's 8-buffer limit,
+  batch 4 still gives 60 fps.
+- The OnePlus HAL replaces YAAP's HAL for every app; per-app automatic switching was tried and dropped
+  (~6.5 s per switch, kills open camera apps). The module has a manual switch instead.
 
-## KernelSU module (module/, tools/build_module.sh -> build/opcamera_yaap-<ver>.zip)
+## KernelSU module (module/, tools/build.sh -> build/opcamera_yaap-<ver>.zip)
 - No system/ dir: KSU 3.x has no metamodule here, and we want our own boot guard. post-fs-data.sh mounts
   everything in init's ns (overlays from /data/adb/modules/opcamera_yaap/files/{sys,hal}, cameraserver
   bind+suid, libbinder bind from /data/adb/opcamera/libbinder.so).
@@ -58,7 +75,7 @@ the pattern is not found.
   The overlay value must also be in values-sw380dp (target defines sw320dp-2128x1080 etc.; an RRO entry only wins if its config is >= as specific), link with --no-resource-deduping.
   /data/adb/opcamera/zoomfix = off. Cause: am.w.z4 sagitta term r - sqrt(r^2 - (W/2)^2) with r = 199dp = 697px
   < 720 = W/2 -> NaN -> row ~280 px too high at 1440 px width.
-- Labels come from the live-tested staging (tools/gen/labels.txt); build refuses unlabeled files and APKs with sharedUserId.
+- Labels come from the live-tested staging (tools/labels.txt); build refuses unlabeled files and APKs with sharedUserId.
 
 ## OnePlus gallery (v1.4)
 - DerpFest's `system_ext/priv-app/OppoGallery2/OppoGallery2.apk` (com.oneplus.gallery 16.35.10, EU/GDPR

@@ -4,6 +4,11 @@ A KernelSU module that brings the OnePlus (OxygenOS) camera and gallery to **YAA
 (waffle)**, using the OnePlus camera port from DerpFest. Nothing is written to system partitions:
 everything is mounted at boot from the module, so removing it and rebooting gives you stock YAAP back.
 
+> **Please don't contact the YAAP or DerpFest maintainers about this module.** It's an unofficial
+> third-party mod, and they don't support it. Post questions and bug reports in the comments under
+> the module's post instead. Also, if something breaks while the module is installed, remove it and
+> check again before reporting a bug to YAAP.
+
 ## Requirements
 - OnePlus 12 (waffle) on **YAAP, Android 17**. Tested on build `CP2A.260605.016`. The installer refuses
   other ROMs/devices.
@@ -57,7 +62,8 @@ Remove the module in KernelSU and reboot. The camera, gallery and Camera HAL app
   in both HAL modes. If that happens, disable the module and report it.
 
 ## What it changes (while enabled)
-- Mounts DerpFest's camera service, OnePlus camera/gallery apps and their libraries over `/system`,
+- Mounts DerpFest's camera service (patched so the OnePlus camera takes the camera from other apps instead
+  of sharing it, which crashes the OnePlus HAL), OnePlus camera/gallery apps and their libraries over `/system`,
   `/system_ext` and `/product`; in OnePlus HAL mode also the OnePlus camera HAL over `/odm` and `/vendor`.
 - Uses a copy of YAAP's `libbinder` with a 4 MB binder buffer instead of 1 MB (the OnePlus HAL sends
   large results). It is generated on the phone from your ROM's own file.
@@ -65,7 +71,7 @@ Remove the module in KernelSU and reboot. The camera, gallery and Camera HAL app
 - Sets a few props so the camera recognizes the device (market name "OnePlus 12", etc.).
 
 ## Reporting problems
-Please send:
+Post in the comments under the module's post (not in YAAP or DerpFest chats). Please include:
 - `/data/adb/opcamera/log.txt`
 - your YAAP build (Settings → About phone)
 - what you did and what happened (a logcat if you can)
@@ -74,10 +80,26 @@ Please send:
 - Lens row / zoom ring position fix: on by default. To turn it off:
   `echo off > /data/adb/opcamera/zoomfix` (as root), then reboot.
 
+## Building from source
+This repository contains only the module's own code and scripts. No OnePlus or DerpFest files are
+included: you extract them from the DerpFest ROM yourself. See [docs/BUILDING.md](docs/BUILDING.md);
+[docs/PAYLOAD.md](docs/PAYLOAD.md) lists where every shipped file comes from and how it's patched.
+
+| path | what |
+|---|---|
+| `module/` | the KernelSU module scripts (install, mounts, boot guard, HAL switch) |
+| `files/` | small config files the module adds (permissions, sysconfig) |
+| `src/` | our native code (`apsfix`, `binderpatch`, `evictfix`, `shim`) and APKs (`halswitch`, `zoomfix`) |
+| `tools/` | build scripts, payload extraction, binary patchers |
+| `payload/` | extracted DerpFest files (not in git); `MANIFEST.sha256` pins the tested versions |
+| `docs/` | build and payload docs, technical notes, the release post |
+| `dev/` | live-test scripts and probes used during development (not part of the build) |
+
 ## Credits
 - **DerpFest** (OnePlus 12 maintainers): the OnePlus camera port this module is based on.
 - **YAAP** team.
 - OnePlus / OPLUS: camera, gallery and HAL (proprietary, all rights theirs).
 
 ## Disclaimer
-Use at your own risk. Not affiliated with OnePlus, YAAP or DerpFest.
+Use at your own risk. Not affiliated with OnePlus, YAAP or DerpFest, and not supported by them: don't
+ask their maintainers or chats for help with it.

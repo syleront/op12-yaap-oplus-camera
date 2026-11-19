@@ -163,3 +163,9 @@ u:object_r:system_lib_file:s0 sys/system_ext/lib64/vendor.oplus.hardware.urcc-V1
 u:object_r:system_file:s0 sys/system_ext/priv-app
 u:object_r:system_file:s0 sys/system_ext/priv-app/OplusCamera
 u:object_r:system_file:s0 sys/system_ext/priv-app/OplusCamera/OplusCamera.apk
+u:object_r:system_file:s0 sys/product
+u:object_r:system_file:s0 sys/product/overlay
+u:object_r:system_file:s0 sys/product/overlay/OPCameraZoomFix
+u:object_r:system_file:s0 sys/product/overlay/OPCameraZoomFix/OPCameraZoomFix.apk
+u:object_r:system_file:s0 sys/system_ext/priv-app/OppoGallery2
+u:object_r:system_file:s0 sys/system_ext/priv-app/OppoGallery2/OppoGallery2.apk

@@ -1,5 +1,5 @@
 📸 **OnePlus Camera for YAAP — OnePlus 12 (waffle)**
-KernelSU module · v1.0.0
+KernelSU module · v1.0.1
 
 OnePlus camera + OnePlus Photos on YAAP, based on DerpFest's port. Nothing is written to system partitions: remove the module, reboot, and you're back on stock YAAP.
 
@@ -28,6 +28,8 @@ OnePlus camera + OnePlus Photos on YAAP, based on DerpFest's port. Nothing is wr
 • Gallery plugin / AI model downloads don't work
 • After a YAAP update the camera may break: disable the module and report
 
-**Bug reports:** send /data/adb/opcamera/log.txt, your YAAP build and what happened.
+⚠️ **Unofficial mod.** Please don't contact the YAAP or DerpFest maintainers or chats about it. They don't support it. Ask everything about the module in the comments below. If something breaks with the module installed, remove it and check again before reporting a bug to YAAP.
+
+**Bug reports (in the comments):** send /data/adb/opcamera/log.txt, your YAAP build and what happened.
 
 Credits: DerpFest OnePlus 12 maintainers, YAAP team. OnePlus camera/gallery/HAL © OnePlus. Use at your own risk.
