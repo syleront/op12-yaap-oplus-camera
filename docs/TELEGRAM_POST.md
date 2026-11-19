@@ -19,7 +19,7 @@ OnePlus camera + OnePlus Photos on YAAP, based on DerpFest's port. Nothing is wr
 
 **Notes**
 • OnePlus HAL (default): OnePlus camera works. YAAP HAL: OnePlus camera won't open; use it if another camera app misbehaves. Close camera apps before switching. The choice is kept after reboot.
-• Bootloop protection: if boot doesn't finish, the module disables itself (automatically after ~5 min, or force a reboot with Power + Vol Up).
+• Bootloop protection: if boot doesn't finish, the module disables itself (automatically after ~5 min, or force a reboot by holding Power + Vol Up + Vol Down together).
 
 **Known issues**
 • 60 fps: greyish viewfinder (the video itself is fine)

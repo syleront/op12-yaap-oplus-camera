@@ -40,8 +40,8 @@ everything is mounted at boot from the module, so removing it and rebooting give
 ## If the phone doesn't boot
 You don't need to do anything special. The module checks whether the boot finished:
 - If the phone hasn't finished booting after ~5 minutes, the module **disables itself and reboots**.
-- Or force a reboot (hold **Power + Volume Up**). If the previous boot never finished, the module
-  disables itself and mounts nothing.
+- Or force a reboot: hold **Power + Volume Up + Volume Down** together until the phone restarts.
+  If the previous boot never finished, the module disables itself and mounts nothing.
 
 Then remove it in KernelSU, or re-enable it after fixing whatever caused it.
 
