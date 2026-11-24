@@ -46,3 +46,5 @@ allow priv_app_36 vendor_hal_qspmhal_service service_manager { find }
 allow priv_app_36 vendor_file file { read open getattr map execute }
 allow priv_app_36 vendor_file dir { search getattr }
 allow priv_app_36 adsprpcd_file file { read open getattr map }
+# loop-mounted module image (only on kernels that refuse /data folders in overlays): read by the kernel
+allow kernel system_file file { read getattr open }

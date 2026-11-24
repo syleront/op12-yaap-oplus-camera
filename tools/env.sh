@@ -5,7 +5,7 @@
 #   BUILD_TOOLS    build-tools version (default: 36.0.0 if installed, else the newest)
 #   PLATFORM       platforms/<PLATFORM>/android.jar (default: android-36)
 #   JAVA_HOME      JDK used by javac/d8/apksigner (JDK 17 recommended; default: ~/.jdks/temurin-17*)
-#   KEYSTORE, KS_PASS, KS_ALIAS   key for HalSwitch/zoomfix APKs (default: the Android debug key)
+#   KEYSTORE, KS_PASS, KS_ALIAS   key for the zoomfix APK (default: the Android debug key)
 #   PYTHON         python3 command (default: python3 if it works, else `wsl -e python3` on Windows)
 #   PATCHELF       patchelf command (default: patchelf if found, else `wsl -e patchelf` on Windows)
 

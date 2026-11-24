@@ -1,11 +1,28 @@
-# KernelSU install script (sourced by the installer; $MODPATH = new module dir)
+# Install script, sourced by the KernelSU / Magisk / APatch installer ($MODPATH = new module dir)
 MODDIR=$MODPATH
 . $MODPATH/common.sh
 
-[ "$KSU" = true ] || abort "! This module is for KernelSU only"
+if [ "$APATCH" = true ]; then MGR=APatch
+elif [ "$KSU" = true ]; then MGR=KernelSU
+elif [ -n "$MAGISK_VER_CODE" ]; then MGR=Magisk
+else abort "! Install this module from the KernelSU, Magisk or APatch app"; fi
+[ "$BOOTMODE" = true ] || abort "! Install from the $MGR app (flashing in recovery is not supported)"
+ui_print "- Root: $MGR"
 [ "$ARCH" = arm64 ] || abort "! arm64 only"
-reason=$(preflight) || abort "! $reason"
-[ -d /system_ext/priv-app/OplusCamera ] && ! grep -q "lowerdir=/data/adb/" /proc/1/mountinfo &&
+if ! reason=$(preflight); then
+    ui_print "! $reason"
+    ui_print "  ($(rom_info))"
+    abort "! Nothing installed"
+fi
+if [ "$(rom_id)" = yaap ]; then
+    ui_print "- ROM: YAAP"
+else
+    ui_print "- ROM: $(rom_name) (EXPERIMENTAL: only tested on YAAP)"
+    ui_print "  Please report the result, with /data/adb/opcamera/log.txt"
+fi
+# (our own camera, if an older version of this module is active, doesn't count: its mounts are "opcamera")
+[ -d /system_ext/priv-app/OplusCamera ] &&
+    ! awk '{ for (i = 7; i <= NF; i++) if ($i == "-") break; if ($(i+2) == "opcamera") f = 1 } END { exit !f }' /proc/1/mountinfo &&
     abort "! This ROM already has the OnePlus camera"
 
 ui_print "- Checking files"
@@ -15,23 +32,29 @@ ui_print "- Setting permissions and SELinux labels"
 apply_labels
 labels_ok || abort "! Could not set SELinux labels"
 
+# Kernels that refuse /data folders as overlay layers: pack the files into an ext4 image (common.sh)
+if ! overlay_ok $F; then
+    ui_print "- This kernel can't overlay files from /data: packing them into an image"
+    ui_print "  (needs ~1 GB free space, takes a minute)"
+    if ! img_build; then
+        mkdir -p $ST; log E "install: image failed: $IMG_ERR"
+        ui_print "! Could not create the image:"
+        echo "$IMG_ERR" | fold -w 60 | while read -r l; do ui_print "  $l"; done
+        abort "! Nothing installed (details also in /data/adb/opcamera/log.txt)"
+    fi
+fi
+
 mkdir -p $ST
-[ -f $ST/hal_mode ] || echo oos > $ST/hal_mode
+rm -f $ST/hal_mode $ST/10bit.orig $ST/rom   # v1.x: HAL switch state
 getprop ro.build.fingerprint > $ST/fingerprint
 rm -f $ST/boot_pending
 rm -f $MODPATH/sha256.txt
 
-# HAL switch app: quick settings tile + launcher icon. Optional; install problems don't stop the module.
-ui_print "- Installing the Camera HAL switch app (quick settings tile + home-screen icon)"
-T=/data/local/tmp/opcamera_halswitch.apk
-if cp $MODPATH/files/HalSwitch.apk $T && chmod 644 $T && pm install -r $T >/dev/null 2>&1; then
-    # toasts are suppressed while an app's notifications are off
-    pm grant com.syleront.opcamera.halswitch android.permission.POST_NOTIFICATIONS >/dev/null 2>&1
-    ui_print "  Allow it root in KernelSU > Superuser (\"Camera HAL\") so it can switch."
-else
-    ui_print "  ! App install failed (module still works; the Action button switches the HAL)"
+# v1.x had a Camera HAL switch app (tile + icon); there is only the ROM's HAL now
+if pm path com.syleront.opcamera.halswitch >/dev/null 2>&1; then
+    ui_print "- Removing the Camera HAL switch app (not needed any more)"
+    pm uninstall com.syleront.opcamera.halswitch >/dev/null 2>&1
 fi
-rm -f $T
 
 # The OnePlus gallery ships as a system app; a copy installed as a normal app would shadow it
 # (it'd run without the camera's SELinux rules and its editor crashes).
@@ -41,8 +64,8 @@ if pm path com.oneplus.gallery 2>/dev/null | grep -q '^package:/data/app/' &&
     pm uninstall com.oneplus.gallery >/dev/null 2>&1
 fi
 
-ui_print "- Camera HAL at boot: $(hal_name $(hal_mode))"
-ui_print "  (press the module's Action button to switch)"
+ui_print "- The OnePlus camera runs on the $(rom_name) camera HAL"
+[ -f $IMG ] && rm -rf $MODPATH/files   # everything is in the image now
 ui_print "- Reboot to activate."
 ui_print "  If the phone doesn't finish booting, it disables this module and reboots"
 ui_print "  by itself after ~5 min. Or force a reboot (hold Power + Vol Up + Vol Down),"

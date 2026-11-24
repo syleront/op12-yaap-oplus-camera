@@ -42,6 +42,7 @@ u:object_r:vendor_file:s0 hal/odm/lib64/hw/camera.oemlayer.so
 u:object_r:vendor_file:s0 hal/odm/lib64/libAlgoInterface.so
 u:object_r:vendor_file:s0 hal/odm/lib64/libAlgoProcess.so
 u:object_r:vendor_file:s0 hal/odm/lib64/libOGLManager.so
+u:object_r:vendor_file:s0 hal/odm/lib64/libYTCommon.so
 u:object_r:vendor_file:s0 hal/odm/lib64/libOPAlgoCamFaceBeautyCap.so
 u:object_r:same_process_hal_file:s0 hal/odm/lib64/libOplusSecurity.so
 u:object_r:vendor_file:s0 hal/odm/lib64/libapsfix.so
@@ -59,6 +60,7 @@ u:object_r:vendor_file:s0 hal/vendor/lib64/camera/components/com.qti.stats.af.so
 u:object_r:vendor_hal_file:s0 hal/vendor/lib64/hw
 u:object_r:vendor_file:s0 hal/vendor/lib64/hw/camera.qcom.so
 u:object_r:vendor_file:s0 hal/vendor/lib64/libui-stock.so
+u:object_r:vendor_file:s0 hal/vendor/lib64/libus.so
 u:object_r:adb_data_file:s0 sys/system
 u:object_r:adb_data_file:s0 sys/system/bin
 u:object_r:cameraserver_exec:s0 sys/system/bin/cameraserver

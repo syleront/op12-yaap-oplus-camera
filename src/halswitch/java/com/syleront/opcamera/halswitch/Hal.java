@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
-/** Talks to the KernelSU module's action.sh through su. All calls block: use a worker thread. */
+/** Talks to the module's action.sh (KernelSU / Magisk / APatch) through su. All calls block: use a worker thread. */
 final class Hal {
     static final String SCRIPT = "/data/adb/modules/opcamera_yaap/action.sh";
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
@@ -23,7 +23,7 @@ final class Hal {
 
     /**
      * Runs action.sh with one argument and returns its one-line answer:
-     * oos | yaap | inactive (for "get"); ok &lt;hal&gt; | busy | inactive | locked | fail &lt;hal&gt; (for app-*);
+     * oos | yaap | inactive (for "get"); ok &lt;hal&gt; | reboot &lt;hal&gt; | busy | inactive | locked | fail &lt;hal&gt; (for app-*);
      * or noroot | nomodule | error.
      */
     static String run(String arg) {
@@ -42,7 +42,7 @@ final class Hal {
             if (!p.waitFor(45, TimeUnit.SECONDS)) { p.destroy(); return "error"; }
             String s = out.toString().trim();
             String last = s.isEmpty() ? "" : s.substring(s.lastIndexOf('\n') + 1);
-            if (last.matches("(ok |fail )?(oos|yaap)|busy|inactive|locked|nomodule")) return last;
+            if (last.matches("(ok |fail |reboot )?(oos|yaap)|busy|inactive|locked|nomodule")) return last;
             // su refused / not granted: no answer from the script
             return "noroot";
         } catch (Exception e) {
@@ -52,20 +52,46 @@ final class Hal {
         }
     }
 
+    private static volatile String rom;
+
+    /** The ROM's name for its own HAL ("YAAP", "LineageOS"), written by the module at boot. Blocks: worker thread. */
+    static String rom() {
+        String r = rom;
+        if (r != null) return r;
+        r = "YAAP";
+        Process p = null;
+        try {
+            p = new ProcessBuilder("su", "-c", "cat /data/adb/opcamera/rom").redirectErrorStream(true).start();
+            p.getOutputStream().close();
+            try (BufferedReader b = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                String line = b.readLine();
+                if (line != null && line.trim().matches("[A-Za-z][A-Za-z0-9 ]{0,19}")) r = line.trim();
+            }
+            if (p.waitFor(10, TimeUnit.SECONDS) && p.exitValue() == 0) rom = r;
+        } catch (Exception e) {
+            // no su yet: keep the default, ask again next time
+        } finally {
+            if (p != null) p.destroy();
+        }
+        return r;
+    }
+
     static String name(String hal) {
-        return "oos".equals(hal) ? "OnePlus" : "yaap".equals(hal) ? "YAAP" : hal;
+        return "oos".equals(hal) ? "OnePlus" : "yaap".equals(hal) ? rom() : hal;
     }
 
     /** Message for a toast after a switch attempt, or null when nothing needs saying. */
     static String message(String r) {
         if (r.equals("ok oos")) return "Camera HAL: OnePlus. The OnePlus camera is ready.";
-        if (r.equals("ok yaap")) return "Camera HAL: YAAP. Don't open the OnePlus camera now.";
+        if (r.equals("ok yaap")) return "Camera HAL: " + rom() + ". Don't open the OnePlus camera now.";
+        if (r.startsWith("reboot ")) return "Another module uses the same system folders, so the HAL can't be switched now. "
+                + "The " + name(r.substring(7)) + " HAL will be used after a reboot.";
         if (r.equals("busy")) return "A camera app is open. Close it and try again.";
         if (r.equals("locked")) return "A HAL switch is already running.";
         if (r.equals("inactive")) return "The OnePlus camera module is not active this boot.";
         if (r.equals("nomodule")) return "The OnePlus camera module is not installed.";
         if (r.startsWith("fail ")) return "Switch failed, HAL is " + name(r.substring(5)) + ". See /data/adb/opcamera/log.txt";
-        if (r.equals("noroot")) return "Allow root for \"Camera HAL\" in KernelSU > Superuser.";
+        if (r.equals("noroot")) return "Allow root for \"Camera HAL\" in your root manager (KernelSU, Magisk or APatch).";
         return "Switch failed (" + r + ").";
     }
 

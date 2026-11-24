@@ -6,4 +6,10 @@
          less than half of this 1440 px screen -> sqrt(negative) = NaN -> the ring shows as a full
          circle and the lens row ends up ~280 px too high. 228dp (the app's own _v2 value) = 798 px. -->
     <dimen name="zoom_arc_seekbar_bg_circle_radius">228dp</dimen>
+    <!-- Pro modes' manual controls (ISO, S, EV, AF, WB): the labels and values are placed from the top of
+         their bar (60dp, bottom-aligned above the shutter area), and with the ring fixed the lens row sits
+         right on the labels. Both moved down by 12dp (12.5 -> 24.5, 25.5 -> 37.5): the values still end
+         inside the bar (37.5 + 22 = 59.5dp). No other qualifiers in the app: values/ is enough. -->
+    <dimen name="hs_main_mode_bar_item_title_margin_top">24.5dp</dimen>
+    <dimen name="hs_main_mode_bar_item_value_margin_top">37.5dp</dimen>
 </resources>

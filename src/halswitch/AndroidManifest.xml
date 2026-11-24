@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.syleront.opcamera.halswitch" android:versionCode="1" android:versionName="1.0">
+    package="com.syleront.opcamera.halswitch" android:versionCode="3" android:versionName="1.2">
     <!-- toasts are suppressed for apps whose notifications are off (default for new apps) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application android:label="@string/app_name" android:icon="@mipmap/ic_launcher"

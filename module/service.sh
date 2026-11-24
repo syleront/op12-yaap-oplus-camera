@@ -1,6 +1,6 @@
 #!/system/bin/sh
 # Boot-loop guard, second half. Clears boot_pending once Android has booted and system_server
-# is stable. If Android never finishes booting, disable the module and reboot into clean YAAP.
+# is stable. If Android never finishes booting, disable the module and reboot into the clean ROM.
 MODDIR=${0%/*}
 . $MODDIR/common.sh
 [ -f $ACTIVE ] || exit 0
@@ -25,7 +25,8 @@ while [ $t -lt 600 ]; do
     if [ -n "$now" ] && [ "$now" = "$ss" ]; then
         rm -f $ST/boot_pending
         log I "system stable, boot guard cleared"
-        cams_ready || log W "camera service lists fewer than 6 cameras after boot"
+        n=$(cams_count); [ "$n" -ge 6 ] && log I "cameras: $n" || log W "camera service lists $n cameras after boot (expected 6+)"
+        mounts_report
         zoomfix_apply
         exit 0
     fi

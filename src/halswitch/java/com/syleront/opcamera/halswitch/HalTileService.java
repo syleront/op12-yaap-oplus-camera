@@ -5,7 +5,7 @@ import android.os.Looper;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
-/** Quick settings tile: on = OnePlus HAL, off = YAAP HAL. Tap to switch. */
+/** Quick settings tile: on = OnePlus HAL, off = the ROM's own HAL (YAAP, LineageOS). Tap to switch. */
 public class HalTileService extends TileService {
     private final Handler main = new Handler(Looper.getMainLooper());
 
@@ -15,10 +15,11 @@ public class HalTileService extends TileService {
         new Thread(new Runnable() {
             @Override public void run() {
                 final String r = Hal.run("get");
+                final String rom = r.equals("yaap") ? Hal.rom() : null;
                 main.post(new Runnable() {
                     @Override public void run() {
                         if (r.equals("oos")) show(Tile.STATE_ACTIVE, "OnePlus");
-                        else if (r.equals("yaap")) show(Tile.STATE_INACTIVE, "YAAP");
+                        else if (r.equals("yaap")) show(Tile.STATE_INACTIVE, rom);
                         else if (r.equals("noroot")) show(Tile.STATE_INACTIVE, "Needs root");
                         else show(Tile.STATE_UNAVAILABLE, "Module off");
                     }

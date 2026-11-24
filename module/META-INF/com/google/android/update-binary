@@ -1,5 +1,6 @@
 #!/sbin/sh
-# KernelSU installs this module through ksud; flashing from recovery is not supported.
+# Installed by the KernelSU / Magisk / APatch app (the Magisk app replaces this file with its own
+# installer); flashing from recovery is not supported.
 OUTFD=$2
-echo "ui_print This module must be installed from the KernelSU manager." > /proc/self/fd/$OUTFD
+echo "ui_print Install this module from the KernelSU, Magisk or APatch app." > /proc/self/fd/$OUTFD
 exit 1
